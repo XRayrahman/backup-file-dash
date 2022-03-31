@@ -1,31 +1,30 @@
-float start_time = 0;
-float end_time = 0;
-float delta_time = 0;
-float delta_time_minutes = 0;
-float round_step_before = 0;
-float start;
-float startMillis;
+double start_time = 0;
+double end_time = 0;
+double delta_time = 0.00000;
+double delta_time_minutes = 0.00000;
+float rpm;
+//bool f = true;
+float step_in = 0.00;
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
+  pinMode(A0, INPUT_PULLUP);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  //step_time = 0;
-  float step_in = (analogRead(A3));
-  float round_step = step_in * (5.0/1023.0);
-  // jika yang dibaca low maka detik akan jalan dalam loop menghitung waktu,
-  // bakal store waktu pada variabel
+  step_in = analogRead(A0);
+  step_in = step_in * (5.0/1023.0);
   start_time = millis();
-  if (round_step < 0.55 && round_step_before > 4.55)
+  while (step_in > 3.55)
   {
+    step_in = analogRead(A0);
+    step_in = step_in * (5.0/1023.0);
     end_time = millis(); 
     delta_time = end_time - start_time;
     delta_time_minutes = delta_time/60000;
+    rpm = 1/delta_time_minutes;
   } 
-  Serial.print("speed : ");
-  Serial.print(delta_time_minutes);
+  
+  Serial.print(rpm, 5);
   Serial.println();
 }
