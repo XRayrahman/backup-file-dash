@@ -1,55 +1,45 @@
-//int A2; //pin baca tegangan
-signed long int steps = 0;
-float step_old = 0;
-float rps = 0;
-float temp = 0;
-unsigned long start_time = 0;
-unsigned long end_time = 0;
-float round_step_before = 0;
+double start_time = 0;
+double end_time = 0;
+double delta_time = 0.00000;
+double delta_time_seconds = 0.00000;
+float rps;
+//bool f = true;
+float step_in = 0.00;
 
 void setup() {
   Serial.begin(9600);
-  //  pinMode(sensor,INPUT_UP);
+  pinMode(A0, INPUT_PULLUP);
 }
 
 void loop() {
-  int x = 0;
-  //baca kecepatan
+  step_in = analogRead(A0);
+  step_in = step_in * (5.0/1023.0);
   start_time = millis();
-  end_time = start_time + 1000;
-  //akan jalan selama 1000ms = 1 detik >> menghitung round per second
-  while (millis() < end_time)
+  while (step_in > 3.55)
   {
-    float step_in = (analogRead(A5));
-    int round_step = step_in * (5.0 / 1023.0);
-//    round_step = round_step / 5;
-    //  Serial.print(round_step);
-    //  Serial.print(voltage);
-    //  main di PULLDOWN, harusnya bisa pakai cara pinMode diatas kalau ada PULLDOWN
-    if (round_step < 1.5 && round_step_before > 3.5)
-    {
-      steps = steps + 1;
-    }
-    //store step skarang untuk dijadikan step sebelum
-    round_step_before = round_step;
-    //  Serial.print(steps);
-    //  Serial.println();
-  }
-  //store jumlah total step skarang untuk dijadikan jumlah total step sebelum
-  temp = steps - step_old;
-  step_old = steps;
+    step_in = analogRead(A0);
+    step_in = step_in * (5.0/1023.0);
+    end_time = millis(); 
+    delta_time = end_time - start_time;
+    delta_time_seconds = delta_time/1000;
 
-  float vin = (analogRead(A1));
+    if(delta_time_seconds > 1){
+      rps = 0.00;  
+      break;
+    }
+    
+    rps = 1/delta_time_seconds;
+  } 
+
+  float vin = (analogRead(A5));
   float voltage = vin * (5.0 / 1023.0);
   voltage = voltage / 0.05952381; 
-  //karna 84 volt (dari rumus pembagian tegangan terus dibalikin lagi)
-
-  //print udah dalam bentuk yang dimengerti json biar enak wkwk
+  
   Serial.print("{\"t\":\"");
   Serial.print(voltage);
   Serial.print("\", ");
   Serial.print("\"r\":\"");
-  Serial.print(temp);
+  Serial.print(rps, 3);
   Serial.print("\"}");
   Serial.println();
 }
