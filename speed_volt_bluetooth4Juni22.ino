@@ -1,13 +1,13 @@
-//#include <Arduino_JSON.h>
 #include <SoftwareSerial.h>
-#include <ArduinoJson.h>
-#include <Arduino_JSON.h>
+//#include <ArduinoJson.h>
+//#include <Arduino_JSON.h>
 
 
 SoftwareSerial HM10(2,3);
 
 String inDataSebelum = "";
 String sendData = "";
+String Data = "";
 double start_time = 0;
 double end_time = 0;
 double delta_time = 0.00000;
@@ -30,7 +30,7 @@ void loop() {
   HM10.listen();
 
 //  StaticJsonDocument<800> doc;
-  DynamicJsonDocument doc(1024);
+//  DynamicJsonDocument doc(1024);
 
 //  kecepatan
   step_in = analogRead(A0);
@@ -79,7 +79,7 @@ void loop() {
     inDataSebelum = sendData;
   }
   inDataSebelum = "";
-  
+  Data = sendData;
   if(sendData=="" || sendData== "stop" || sendData== " ") {
 //    isRun = false;
     Serial.print(", \"isRun\":false }");
@@ -87,7 +87,7 @@ void loop() {
   }
   else {
     Serial.print(", ");
-    Serial.print(sendData);
+    Serial.print(String(Data));
     Serial.print(", \"isRun\":true }");
     Serial.println();
   }
