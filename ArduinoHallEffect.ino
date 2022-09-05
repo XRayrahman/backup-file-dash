@@ -16,7 +16,7 @@
  void loop()//Measure RPM   
  {
    
-   if (half_revolutions >= 1) { 
+   if (half_revolutions >= 5) { 
 //     rpm = 30*1000/(millis() - timeold)*half_revolutions;
      rpm = 12*1000/(millis() - timeold)*half_revolutions;
      timeold = millis();
