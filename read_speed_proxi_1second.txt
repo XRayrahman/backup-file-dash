@@ -1,0 +1,19 @@
+ // baca kecepatan menggunakan proximity dengan stream data per satu detik
+  start_time = millis();
+  end_time = start_time + 1000;
+  //akan jalan selama 1000ms = 1 detik >> menghitung round per second
+  while (millis() < end_time)
+  {
+    float step_in = (analogRead(A5));
+    int round_step = step_in * (5.0 / 1023.0);
+    round_step = round_step / 5;
+    if (round_step < 0.5 && round_step_before > 0.75)
+    {
+      steps = steps + 1;
+    }
+    //store step skarang untuk dijadikan step sebelum
+    round_step_before = round_step;
+  }
+  //store jumlah total step skarang untuk dijadikan jumlah total step sebelum
+  rps = (steps - step_old)*2;
+  step_old = steps;
