@@ -1,0 +1,19 @@
+// baca kecepatan menggunakan proximity dengan stream data berdasarkan delta time pulse
+  step_in = analogRead(A0);
+  step_in = step_in * (5.0/1023.0);
+  start_time = millis();
+  while (step_in > 3.55)
+  {
+    step_in = analogRead(A0);
+    step_in = step_in * (5.0/1023.0);
+    end_time = millis(); 
+    delta_time = end_time - start_time;
+    delta_time_seconds = delta_time/1000;
+
+    if(delta_time_seconds > 1){
+      rps = 0.00;  
+      break;
+    }
+    rps = 1/delta_time_seconds;
+  } 
+  rps = step_in;   // untuk dev 
