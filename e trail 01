@@ -1,0 +1,63 @@
+//int A2; //pin baca tegangan
+signed long int steps = 0;
+float step_old = 0;
+float rps = 0;
+float total_step = 0;
+unsigned long start_time = 0;
+unsigned long end_time = 0;
+int round_step_before = 0;
+
+void setup() {
+  Serial.begin(115200);
+  //  pinMode(sensor,INPUT_UP);
+}
+
+void loop() {
+  int x = 0;
+  //baca kecepatan
+  start_time = millis();
+  end_time = start_time + 1000;
+  //akan jalan selama 1000ms = 1 detik >> menghitung round per second
+  while (millis() < end_time)
+  { float step_in = (analogRead(A4));
+
+    int round_step = step_in * (5.0 / 1023.0);
+    //    round_step = round_step / 5;
+    //      Serial.println(round_step);
+    //  Serial.print(voltage);
+    //  main di PULLDOWN, harusnya bisa pakai cara pinMode diatas kalau ada PULLDOWN
+    if (round_step < 2.5 && round_step_before > 2.75)
+    {
+      steps = steps + 1;
+    }
+    //store step skarang untuk dijadikan step sebelum
+    round_step_before = round_step;
+    //  Serial.print(steps);
+    //  Serial.println();
+  }
+  //store jumlah total step skarang untuk dijadikan jumlah total step sebelum
+  total_step = steps - step_old;
+  step_old = steps;
+
+  float volt_in = (analogRead(A0));
+  float voltage = volt_in * (5.0 / 1023.0);
+  voltage = voltage * 15.4;
+  //voltage = voltage * 18.55;
+  //karna 84 volt (dari rumus pembagian tegangan terus dibalikin lagi)
+
+  float suhu_in = (analogRead(A2));
+  float suhu = suhu_in * (5.0 / 1023.0);
+  suhu = (suhu * 100) * 0.88;
+
+  //print udah dalam bentuk yang dimengerti json biar enak wkwk
+  Serial.print("{\"t\":\"");
+  Serial.print(voltage);
+  Serial.print("\", ");
+  Serial.print("\"s\":\"");
+  Serial.print(suhu);
+  Serial.print("\", ");
+  Serial.print("\"r\":\"");
+  Serial.print(total_step);
+  Serial.print("\"}");
+  Serial.println();
+}
