@@ -1,8 +1,8 @@
+//#define SERIAL_TX_BUFFER_SIZE 128
+//#define SERIAL_RX_BUFFER_SIZE 128
 #include <SoftwareSerial.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-//#define SERIAL_TX_BUFFER_SIZE 128
-//#define SERIAL_RX_BUFFER_SIZE 128
 #include <FreqMeasure.h>
 #define ONE_WIRE_BUS 7
 
@@ -24,6 +24,8 @@ void setup() {
   // pinMode(A0, INPUT_PULLUP);
   HM10.begin(115200);
   FreqMeasure.begin();
+  sensors.setResolution(9);
+  sensors.requestTemperatures();
 
 }
 
@@ -62,10 +64,13 @@ void serial_com()
     {rps = 0;}
     
 //   suhu 
+    if (sensors.isConversionComplete()){
     suhu = ds18b20();
+    sensors.requestTemperatures();
+    }
     
     Serial.print("{ \"t\":\"");
-    Serial.print(voltage);
+    Serial.print(tegangan);
     Serial.print("\", ");
     Serial.print("\"s\":\"");
     Serial.print(suhu);
@@ -75,13 +80,11 @@ void serial_com()
     Serial.print("\"");
   }
 
-void ds18b20(){
-    sensors.setResolution(9);
-    sensors.requestTemperatures();
+float ds18b20(){
     return sensors.getTempCByIndex(0);
 }
 
-void tegangan84v(){
+float tegangan84v(){
     float vin = (analogRead(A0));
     float voltage = vin * (5.0 / 1023.0);
     return voltage *16.8; 
